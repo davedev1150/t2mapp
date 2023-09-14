@@ -1,4 +1,5 @@
 import pymongo
+import schedule
 import requests
 import datetime
 import time
@@ -121,7 +122,8 @@ def send_line_notification(message):
         print("Alertstatus : Failed to send notification")
 
 
-def offlinestatus(json_data):
+def offlinestatus():
+    json_data = login_getewon()
     offline = []
     online = []
     text_offline = ""
@@ -165,9 +167,13 @@ def offlinestatus(json_data):
         "\n"+"-----------------\n" + text_offline
     r = requests.post(url, headers=headers, data={'message': msg})
     print(f"Offlinestatus: {r.text}")
+    print(msg)
 
 
-def alertstatus(ewon_data, laststatus):
+def alertstatus():
+    ewon_data = login_getewon()
+    insert_data(ewon_data)
+    laststatus = last_status()
     current_datetime = datetime.now()
     # Format the current date and time as a string
     formatted_datetime = current_datetime.strftime("%d/%m/%Y %H:%M:%S")
@@ -195,18 +201,23 @@ def alertstatus(ewon_data, laststatus):
                     #     f"id: {current_ewon_id} ,name: {current_ewon_name} is same!! ({formatted_datetime})")
                     data = "Alertstatus is same"
     message = "All devices do not change status state."
-    send_line_notification(message)
+    print("Alertstatus---")
+    # send_line_notification(message)
 
 
-while True:
-    try:
-        ewon_data = login_getewon()
-        # print(ewon_data)
-        insertdatastatus = insert_data(ewon_data)
-        laststatus = last_status()
-        # print(laststatus)
-        alertstatus(ewon_data, laststatus)
-        offlinestatus(ewon_data)
-    except Exception as e:
-        print(f"An error occurred: {e}")
-    time.sleep(60)
+def main():
+    # Schedule to run alertstatus(ewon_data, laststatus) every hour
+    schedule.every(1).hour.do(alertstatus)
+
+    # Schedule to run offlinestatus(ewon_data) at 8:00 AM, 12:00 PM, and 5:00 PM
+    schedule.every().day.at("08:00").do(offlinestatus)
+    schedule.every().day.at("12:00").do(offlinestatus)
+    schedule.every().day.at("17:00").do(offlinestatus)
+
+    while True:
+        schedule.run_pending()
+        time.sleep(60)
+
+
+if __name__ == "__main__":
+    main()
