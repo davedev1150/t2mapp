@@ -8,7 +8,8 @@ WORKDIR /app
 COPY . /app
 
 # Install any needed packages specified in requirements.txt
-RUN pip install -r requirements.txt
+RUN pip install --upgrade pip
+RUN pip install --user -r requirements.txt
 
 # Set the timezone to Bangkok (Asia/Bangkok)
 RUN ln -sf /usr/share/zoneinfo/Asia/Bangkok /etc/localtime

@@ -165,15 +165,15 @@ def offlinestatus():
     msg = "\n" + "offline status\n" + "วันที่ :" + \
         str(formatted_date) + "\n" + "เวลา :" + str(formatted_time) + \
         "\n"+"-----------------\n" + text_offline
-    r = requests.post(url, headers=headers, data={'message': msg})
-    print(f"Offlinestatus: {r.text}")
+    # r = requests.post(url, headers=headers, data={'message': msg})
+    # print(f"Offlinestatus: {r.text}")
     print(msg)
 
 
 def alertstatus():
     ewon_data = login_getewon()
-    insert_data(ewon_data)
     laststatus = last_status()
+    insert_data(ewon_data)
     current_datetime = datetime.now()
     # Format the current date and time as a string
     formatted_datetime = current_datetime.strftime("%d/%m/%Y %H:%M:%S")
