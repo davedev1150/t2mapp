@@ -3,7 +3,6 @@ import schedule
 import requests
 import datetime
 import time
-import threading
 from datetime import datetime
 
 
@@ -315,7 +314,7 @@ def send_line_notification(message):
     else:
         print("Alertstatus : Failed to send notification")
 
-
+alertstatus()
 def main():
     # Schedule to run alertstatus(ewon_data, laststatus) every hour
     schedule.every(1).hour.do(alertstatus)
